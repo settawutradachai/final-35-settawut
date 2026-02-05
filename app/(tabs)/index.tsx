@@ -8,53 +8,56 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-type Snack = {
-  snackName: string;
-  snackPrice: string;
-  snackDes: string;
+type Car = {
+  brand: string;
+  model: string;
+  year: string;
+  description: string;
 };
 
 export default function ListScreen() {
-  const [allSnack, setAllSnack] = useState<Snack[]>([]);
+  const [allCars, setAllCars] = useState<Car[]>([]);
 
   useEffect(() => {
-    loadSnack();
-  }, [allSnack]);
+    loadCars();
+  }, [allCars]);
 
-  async function loadSnack() {
-    const data = await AsyncStorage.getItem("snack");
-    if (data != null) {
-      setAllSnack(JSON.parse(data));
+  async function loadCars() {
+    const data = await AsyncStorage.getItem("cars");
+    if (data) {
+      setAllCars(JSON.parse(data));
     }
   }
 
-  async function removeSnack(index: number) {
-    const newSnack = allSnack.filter((_, i) => i != index);
-    setAllSnack(newSnack);
-    await AsyncStorage.setItem("snack", JSON.stringify(newSnack));
+  async function removeCar(index: number) {
+    const newCars = allCars.filter((_, i) => i !== index);
+    setAllCars(newCars);
+    await AsyncStorage.setItem("cars", JSON.stringify(newCars));
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.headerTitle}>รายการทั้งหมด</Text>
+      <Text style={styles.headerTitle}>🚘 รายการรถทั้งหมด</Text>
+
       <FlatList
-        data={allSnack}
+        data={allCars}
         keyExtractor={(_, i) => i.toString()}
         renderItem={({ item, index }) => (
           <View style={styles.card}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>{item.snackName.toString()}</Text>
-              <Text style={styles.cardPrice}>
-                ฿{item.snackPrice.toString()}
-              </Text>
-            </View>
-            <Text style={styles.cardDes}>{item.snackDes.toString()}</Text>
-            <TouchableOpacity onPress={() => removeSnack(index)}>
+            <Text style={styles.brand}>{item.brand}</Text>
+            <Text style={styles.year}>{item.year}</Text>
+            <Text style={styles.model}>{item.model}</Text>
+            <Text style={styles.description}>{item.description}</Text>
+
+            <TouchableOpacity onPress={() => removeCar(index)}>
               <Text style={styles.deleteText}>ลบรายการ</Text>
             </TouchableOpacity>
           </View>
         )}
-        ListEmptyComponent={<Text style={styles.empty}>ไม่มีข้อมูล</Text>}
+        ListEmptyComponent={
+          <Text style={styles.empty}>ยังไม่มีข้อมูลรถ 🚗</Text>
+        }
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -64,53 +67,69 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: "#0E0F13",
   },
+
   headerTitle: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#333",
+    fontSize: 28,
+    fontWeight: "900",
+    color: "#FFFFFF",
     marginBottom: 20,
+    letterSpacing: 1,
   },
+
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#161821",
     padding: 20,
-    borderRadius: 20,
-    marginBottom: 15,
-
-    elevation: 6,
-
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
+    borderRadius: 22,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: "#2A2D3A",
   },
+
   cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
-  cardTitle: {
+
+  brand: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#2E7D32",
+    fontWeight: "800",
+    color: "#4D5BFF",
+    letterSpacing: 0.5,
   },
-  cardPrice: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#4CAF50",
+
+  year: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#A0A4FF",
   },
-  cardDes: {
-    color: "#666",
-    marginTop: 5,
+
+  model: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#FFFFFF",
+    marginTop: 6,
   },
+
+  description: {
+    color: "#B5B7C5",
+    marginTop: 8,
+    lineHeight: 20,
+  },
+
   deleteText: {
-    color: "#FF5252",
-    marginTop: 10,
-    fontWeight: "600",
+    color: "#FF5C5C",
+    marginTop: 14,
+    fontWeight: "700",
     textAlign: "right",
   },
+
   empty: {
     textAlign: "center",
-    color: "#999",
-    marginTop: 50,
+    color: "#777",
+    marginTop: 60,
+    fontSize: 16,
   },
 });

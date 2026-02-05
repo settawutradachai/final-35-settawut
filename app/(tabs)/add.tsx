@@ -10,64 +10,77 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Home() {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [des, setDes] = useState("");
-  const [allSnack, setAllSnack] = useState("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
+  const [description, setDescription] = useState("");
+  const [allCars, setAllCars] = useState([]);
 
   useEffect(() => {
-    loadSnack();
-  }, [allSnack]);
+    loadCars();
+  }, [allCars]);
 
-  async function loadSnack() {
-    const data = await AsyncStorage.getItem("snack");
-    if (data != null) {
-      setAllSnack(JSON.parse(data));
+  async function loadCars() {
+    const data = await AsyncStorage.getItem("cars");
+    if (data) {
+      setAllCars(JSON.parse(data));
     }
   }
 
-  async function addSnack() {
-    const snack = {
-      snackName: name,
-      snackPrice: price,
-      snackDes: des,
+  async function addCar() {
+    const car = {
+      brand,
+      model,
+      year,
+      description,
     };
 
-    console.log(snack);
+    const newCars = [...allCars, car];
+    await AsyncStorage.setItem("cars", JSON.stringify(newCars));
+    setAllCars(newCars);
 
-    const newSnack = [...allSnack, snack];
-    await AsyncStorage.setItem("snack", JSON.stringify(newSnack));
-    setName("");
-    setPrice("");
-    setDes("");
+    // clear input
+    setBrand("");
+    setModel("");
+    setYear("");
+    setDescription("");
   }
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.header}>
-        เพิ่มข้อมูลใหม่ {name} | {price}{" "}
-      </Text>
+      <Text style={styles.header}>เพิ่มข้อมูลรถยนต์ 🚗</Text>
 
       <View style={styles.cardForm}>
-        {/* ส่วนกรอกข้อความ */}
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>หัวข้อ</Text>
+          <Text style={styles.label}>ยี่ห้อรถ</Text>
           <TextInput
             style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder="ชื่อ"
+            value={brand}
+            onChangeText={setBrand}
+            placeholder="เช่น Toyota"
             placeholderTextColor="#C1C1C1"
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>ราคา</Text>
+          <Text style={styles.label}>รุ่นรถ</Text>
           <TextInput
             style={styles.input}
-            value={price}
-            onChangeText={setPrice}
-            placeholder="ราคา"
+            value={model}
+            onChangeText={setModel}
+            placeholder="เช่น Corolla"
+            placeholderTextColor="#C1C1C1"
+          />
+        </View>
+
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>ปีผลิต</Text>
+          <TextInput
+            style={styles.input}
+            value={year}
+            onChangeText={setYear}
+            placeholder="เช่น 2022"
+            keyboardType="numeric"
             placeholderTextColor="#C1C1C1"
           />
         </View>
@@ -76,16 +89,16 @@ export default function Home() {
           <Text style={styles.label}>รายละเอียด</Text>
           <TextInput
             style={[styles.input, styles.textArea]}
-            value={des}
-            onChangeText={setDes}
-            placeholder="ใส่รายละเอียดที่นี่..."
+            value={description}
+            onChangeText={setDescription}
+            placeholder="รายละเอียดเพิ่มเติม..."
             multiline
             placeholderTextColor="#C1C1C1"
           />
         </View>
 
-        <TouchableOpacity style={styles.saveButton} onPress={addSnack}>
-          <Text style={styles.saveButtonText}>บันทึกรายการ</Text>
+        <TouchableOpacity style={styles.saveButton} onPress={addCar}>
+          <Text style={styles.saveButtonText}>บันทึกข้อมูลรถ</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -95,83 +108,73 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 25,
+    backgroundColor: "#0E0F13",
+    padding: 20,
   },
+
   header: {
-    fontSize: 26,
-    fontWeight: "800",
-    color: "#333333",
+    fontSize: 30,
+    fontWeight: "900",
+    color: "#FFFFFF",
     marginBottom: 20,
-    marginTop: 10,
+    letterSpacing: 1,
   },
+
   cardForm: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 24,
+    backgroundColor: "#161821",
+    borderRadius: 28,
     padding: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.05,
-    shadowRadius: 20,
-    elevation: 5,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#555555",
-    marginBottom: 8,
-  },
-  imageContainer: {
-    width: "100%",
-    height: 180,
-    backgroundColor: "#F5F5F5",
-    borderRadius: 16,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
-    borderStyle: "dashed",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 20,
-    overflow: "hidden",
+    borderColor: "#2A2D3A",
   },
-  placeholderText: {
-    color: "#999",
-    fontSize: 14,
-  },
-  selectedImage: {
-    width: "100%",
-    height: "100%",
-  },
+
   inputGroup: {
-    marginBottom: 20,
+    marginBottom: 18,
   },
+
+  label: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: "#8F94FF",
+    marginBottom: 6,
+    letterSpacing: 0.8,
+    textTransform: "uppercase",
+  },
+
   input: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1.5,
-    borderColor: "#EEF2EE",
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    backgroundColor: "#0E0F13",
+    borderWidth: 1.2,
+    borderColor: "#2E3142",
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     fontSize: 16,
-    color: "#444444",
+    color: "#FFFFFF",
   },
+
   textArea: {
-    height: 100,
+    height: 120,
     textAlignVertical: "top",
   },
+
   saveButton: {
-    backgroundColor: "#4CAF50",
-    paddingVertical: 16,
-    borderRadius: 14,
+    marginTop: 20,
+    backgroundColor: "#4D5BFF",
+    paddingVertical: 18,
+    borderRadius: 999,
     alignItems: "center",
-    shadowColor: "#4CAF50",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowColor: "#4D5BFF",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.6,
+    shadowRadius: 16,
+    elevation: 8,
   },
+
   saveButtonText: {
     color: "#FFFFFF",
-    fontSize: 17,
-    fontWeight: "bold",
+    fontSize: 18,
+    fontWeight: "800",
+    letterSpacing: 1,
   },
 });
+

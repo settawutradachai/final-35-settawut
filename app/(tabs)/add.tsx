@@ -10,7 +10,6 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ASYNC_STORAGE_CARS_KEY } from "../../types/car";
 
-// หน้าเพิ่มข้อมูลรถยนต์ (โครงคล้ายตัวอย่าง One Piece แต่เปลี่ยนเป็นข้อมูลรถ)
 export default function AddScreen() {
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");

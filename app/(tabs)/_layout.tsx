@@ -1,10 +1,6 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
-/**
- * Tab Navigation 2 หน้า: แสดงข้อมูล (มีปุ่มลบที่การ์ด) | เพิ่มข้อมูล
- * ใช้ไอคอนจาก @expo/vector-icons (Ionicons)
- */
 export default function Layout() {
   return (
     <Tabs
